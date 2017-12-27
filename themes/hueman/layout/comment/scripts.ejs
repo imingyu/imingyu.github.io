@@ -1,0 +1,32 @@
+<% if (theme.comment.disqus) { %>
+    <%- partial('comment/disqus', { script: true }) %>
+<% } else if (theme.comment.duoshuo) { %>
+    <%- partial('comment/duoshuo', { script: true }) %>
+<% } else if (theme.comment.youyan) { %>
+    <%- partial('comment/youyan', { script: true }) %>
+<% } else if (theme.comment.facebook) { %>
+    <%- partial('comment/facebook', { script: true }) %>
+<% } else if (theme.comment.isso) { %>
+    <%- partial('comment/isso', { script: true }) %>
+<% } else if (theme.comment.changyan.on) { %>
+    <%- partial('comment/changyan', { script: true }) %>
+<% } else if (theme.comment.valine.on) { %>
+    <%- partial('comment/valine', { script: true }) %>
+<% } %>
+
+<!--Github Issue 评论系统-->
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+    $(function () {
+        var comments = $("#comments");
+        if(comments.length>0){
+            new Gitalk({
+                clientID: '20817dd8dec2beb50452',
+                clientSecret: 'de86f690cb639d5fd6420d8d1d671a07ecfcbf04',
+                repo: 'blog-comments',
+                owner: 'imingyu',
+                admin: ['imingyu'],
+            }).render(comments[0]);
+        }
+    })
+</script>
