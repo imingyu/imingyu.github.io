@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    
+    <title>使用MpKit的事件、Mixin、SetData优化、全局拦截等功能增强开发多平台小程序 | 我爱吃西瓜的个人博客</title>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="keywords" content="" />
+    
+    <meta name="description" content="MpKit与本文章均在不断更新，为保证您获取到的内容是最新的，请关注：https:&#x2F;&#x2F;imingyu.github.io&#x2F;2020&#x2F;mpkit&#x2F;  前言近年来，多个公司都开发出了小程序这样的“微应用”方案，其在生态扩展、功能增强等方面都发挥着重要的作用； 作为开发者却要同时面对多个小程序平台，实现相似的功能，如果不考虑使用框架的话，在底层的一些基础技术解决方案上，有没有一个轻量级的选择？ 我们在">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用MpKit的事件、Mixin、SetData优化、全局拦截等功能增强开发多平台小程序">
+<meta property="og:url" content="http://yoursite.com/2020/mpkit/index.html">
+<meta property="og:site_name" content="我爱吃西瓜的个人博客">
+<meta property="og:description" content="MpKit与本文章均在不断更新，为保证您获取到的内容是最新的，请关注：https:&#x2F;&#x2F;imingyu.github.io&#x2F;2020&#x2F;mpkit&#x2F;  前言近年来，多个公司都开发出了小程序这样的“微应用”方案，其在生态扩展、功能增强等方面都发挥着重要的作用； 作为开发者却要同时面对多个小程序平台，实现相似的功能，如果不考虑使用框架的话，在底层的一些基础技术解决方案上，有没有一个轻量级的选择？ 我们在">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-08-19T02:05:24.932Z">
+<meta property="article:modified_time" content="2020-08-19T09:31:05.198Z">
+<meta property="article:author" content="Yuan Mingyu">
+<meta name="twitter:card" content="summary">
+    
+
+    
+
+    
+        <link rel="icon" href="/images/favicon.png" />
+    
+
+    
+<link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="/libs/titillium-web/styles.css">
+
+    
+<link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+
+    <!--Github Issue 评论系统-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+<script src="/libs/jquery/2.0.3/jquery.min.js"></script>
+
+    
+    
+        
+<link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+
+    
+    
+    
+    
+        <script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?078e2b6be67b28aba024d2875764ee9f";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+    
+
+
+<meta name="generator" content="Hexo 5.0.2"></head>
+
+<body>
+    <div id="wrap">
+        <header id="header">
+    <div id="header-outer" class="outer">
+        <div class="container">
+            <div class="container-inner">
+                <div id="header-title">
+                    <h1 class="logo-wrap">
+                        <a href="/" class="logo"></a>
+                    </h1>
+                    
+                </div>
+                <div id="header-inner" class="nav-container">
+                    <a id="main-nav-toggle" class="nav-icon fa fa-bars"></a>
+                    <div class="nav-container-inner">
+                        <ul id="main-nav">
+                            
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/">主页</a>
+                                </li>
+                            
+                                        
+                                    
+                                <li class="main-nav-list-item" >
+                                    <a class="main-nav-list-link" href="/about/index.html">关于</a>
+                                </li>
+                            
+                        </ul>
+                        <nav id="sub-nav">
+                            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="想要查找什么..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+</div>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+        <div class="container">
+            <div class="main-body container-inner">
+                <div class="main-body-inner">
+                    <section id="main">
+                        <div class="main-body-header">
+    <h1 class="header">
+    
+    未分类
+    </h1>
+</div>
+                        <div class="main-body-content">
+                            <article id="post-mpkit" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+        使用MpKit的事件、Mixin、SetData优化、全局拦截等功能增强开发多平台小程序
+        </h1>
+    
+
+            </header>
+        
+        
+            <div class="article-meta">
+                
+    <div class="article-date">
+        <a href="/2020/mpkit/" class="article-date">
+            <time datetime="2020-08-19T02:05:24.932Z" itemprop="datePublished">2020-08-19</time>
+        </a>
+    </div>
+
+                
+            </div>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+            <blockquote>
+<p>MpKit与本文章均在不断更新，为保证您获取到的内容是最新的，请关注：<a target="_blank" rel="noopener" href="https://imingyu.github.io/2020/mpkit/">https://imingyu.github.io/2020/mpkit/</a></p>
+</blockquote>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>近年来，多个公司都开发出了小程序这样的“微应用”方案，其在生态扩展、功能增强等方面都发挥着重要的作用；</p>
+<p>作为开发者却要同时面对多个小程序平台，实现相似的功能，如果不考虑使用框架的话，在底层的一些基础技术解决方案上，有没有一个轻量级的选择？</p>
+<p>我们在开发一个小程序时，往往会有以下技术需求：</p>
+<ol>
+<li>全局事件总线</li>
+<li>优化小程序的setData函数</li>
+<li>希望将App/Page/Component上的共有功能拆分，并可以有效性的重复利用，甚至组建为App/Page/Component基类</li>
+<li>可以全局拦截执行某些操作，如：异常报错、网络请求、功能制止、App/Page/Component的生命周期等</li>
+</ol>
+<p>基于以上需求，都是我以往实现过的功能，所以我将我的经验总结成了一个开源项目MpKit，里面就包含对以上需求的功能实现，且不止于此；</p>
+<p>MpKit的主要功能都经过单元测试，可放心使用，项目主页：<a target="_blank" rel="noopener" href="https://github.com/imingyu/mpkit">https://github.com/imingyu/mpkit</a>；</p>
+<p>下面我来介绍下它的具体用法和功能列表。</p>
+<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>MpKit发布到了NPM平台，以模块化的方式划分为多个包，某些包不止能用在小程序平台，还可以用到h5等平台；某些包却无法在小程序上使用，包列表及相关功能如下：</p>
+<blockquote>
+<p>以下包均支持TypeScript语言</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>包</th>
+<th></th>
+<th>适用平台</th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th>简介</th>
+</tr>
+</thead>
+<tbody><tr>
+<td></td>
+<td>小程序</td>
+<td></td>
+<td></td>
+<td></td>
+<td>H5</td>
+<td>Node.js</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>微信</td>
+<td>支付宝</td>
+<td>百度</td>
+<td>字节跳动</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.npmjs.com/package/@mpkit/inject">@mpkit/inject</a></td>
+<td>●</td>
+<td>●</td>
+<td>●</td>
+<td>●</td>
+<td></td>
+<td></td>
+<td>提供小程序环境适用的多种实用函数或组件，如setData优化、Mixin、事件总线等。<a target="_blank" rel="noopener" href="https://github.com/imingyu/mpkit/tree/master/packages/inject">查看文档</a></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.npmjs.com/package/@mpkit/ebus">@mpkit/ebus</a></td>
+<td>●</td>
+<td>●</td>
+<td>●</td>
+<td>●</td>
+<td>●</td>
+<td>●</td>
+<td>提供事件触发、监听等功能。<a target="_blank" rel="noopener" href="https://github.com/imingyu/mpkit/tree/master/packages/ebus">查看文档</a></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.npmjs.com/package/@mpkit/mixin">@mpkit/mixin</a></td>
+<td>●</td>
+<td>●</td>
+<td>●</td>
+<td>●</td>
+<td></td>
+<td></td>
+<td>为小程序提供混入功能。<a target="_blank" rel="noopener" href="https://github.com/imingyu/mpkit/tree/master/packages/mixin">查看文档</a></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.npmjs.com/package/@mpkit/util">@mpkit/util</a></td>
+<td>●</td>
+<td>●</td>
+<td>●</td>
+<td>●</td>
+<td></td>
+<td></td>
+<td>工具函数<a target="_blank" rel="noopener" href="https://github.com/imingyu/mpkit/tree/master/packages/util">查看文档</a></td>
+</tr>
+</tbody></table>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>如果你的小程序项目中支持引入npm包，那么你直接根据自己的需要安装对应包即可，如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i @mpkit/ebus -S</span><br></pre></td></tr></table></figure>
+
+<p>但是如果你是原生开发，不支持引入npm包，你最大的可能需要用到<code>@mpkit/inject</code>包，此包中的功能基本包含了其他包的所有功能，且支持按需插件化安装，可节省你的字节空间；使用<code>@mpkit/inject</code>：</p>
+<ol>
+<li>在磁盘任意位置创建临时目录如<code>xx/temp</code>;</li>
+<li>在此目录中执行命令：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i @mpkit/inject</span><br></pre></td></tr></table></figure></li>
+<li>找到<code>xx/temp/node_modules/@mpkit/inject</code>下的<code>dist</code>目录，将其下内容拷贝到你的小程序项目目录下；</li>
+<li>找到<code>dist/config.js</code>文件，将你需要的功能插件引入，如：<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 提供事件类功能</span></span><br><span class="line"><span class="keyword">import</span> &#123; plugin <span class="keyword">as</span> EbusPlugin &#125; <span class="keyword">from</span> <span class="string">&#x27;./plugins/ebus&#x27;</span>;</span><br><span class="line"><span class="comment">// 提供混入功能</span></span><br><span class="line"><span class="keyword">import</span> &#123; plugin <span class="keyword">as</span> MixinPlugin &#125; <span class="keyword">from</span> <span class="string">&#x27;./plugins/mixin&#x27;</span>;</span><br><span class="line"><span class="comment">// 提供setData优化</span></span><br><span class="line"><span class="keyword">import</span> &#123; plugin <span class="keyword">as</span> SetDataPlugin &#125; <span class="keyword">from</span> <span class="string">&#x27;./plugins/set-data&#x27;</span>;</span><br><span class="line"><span class="keyword">var</span> config = &#123;</span><br><span class="line">    <span class="comment">// 是否重写全局变量</span></span><br><span class="line">    rewrite: &#123;</span><br><span class="line">        App: <span class="literal">false</span>, <span class="comment">// 重写全局变量App为 plugins/mixin 中的MkApp 即 MpKit.App</span></span><br><span class="line">        Page: <span class="literal">false</span>, <span class="comment">// 重写全局变量Page为 plugins/mixin 中的MkPage 即 MpKit.Page</span></span><br><span class="line">        Component: <span class="literal">false</span>, <span class="comment">// 重写全局变量Component为 plugins/mixin 中的MkComponent 即 MpKit.Component</span></span><br><span class="line">        Api: <span class="literal">false</span>, <span class="comment">// 重写全局api变量wx/my/tt为 plugins/mixin 中的MkApi 即 MpKit.Api</span></span><br><span class="line">        setData: <span class="literal">false</span> <span class="comment">// 重写Page/Component中的setData为优化后的setData 即 MpKit.setData</span></span><br><span class="line">    &#125;,</span><br><span class="line">    plugins: [</span><br><span class="line">        EbusPlugin,</span><br><span class="line">        MixinPlugin,</span><br><span class="line">        SetDataPlugin</span><br><span class="line">    ]</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> config;</span><br></pre></td></tr></table></figure></li>
+<li>如果配置了<code>config.rewrite</code>项，请在小程序项目的<code>app.js</code>的第一行处引入<code>@mpkit/inject/dist</code>中的<code>index.js</code>文件，否则无法实现全局变量重写；如果没有配置该项，则需要在使用时引入，如：<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> MpKit <span class="keyword">from</span> <span class="string">&#x27;@mpkit/inject/dist/index&#x27;</span>;</span><br><span class="line">MpKit.on(...);</span><br></pre></td></tr></table></figure></li>
+<li>安装完成。</li>
+<li>小提示：不需要的插件js文件可以直接删掉，插件不直接相互依赖。</li>
+</ol>
+<h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><blockquote>
+<p>这里着重介绍<code>@mpkit/inject</code>包的使用方式和细节，其他包可自行参考对应文档；</p>
+</blockquote>
+<p><code>@mpkit/inject</code>包提供下列功能，</p>
+<table>
+<thead>
+<tr>
+<th>方法/变量</th>
+<th>作用</th>
+<th>依赖插件</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>on(eventName:string, handler:Function)</code></td>
+<td>为某全局事件添加监听函数</td>
+<td>ebus</td>
+</tr>
+<tr>
+<td><code>off(eventName:string, handler:Function)</code></td>
+<td>为某全局事件移除监听函数</td>
+<td>ebus</td>
+</tr>
+<tr>
+<td><code>emit(eventName:string, data:any)</code></td>
+<td>触发某全局事件并传递数据</td>
+<td>ebus</td>
+</tr>
+<tr>
+<td><code>App(...mixins:MpAppSpec[]) : MpAppSpec</code></td>
+<td>接收多个对象，对象结构与小程序<code>App</code>函数接收的对象结构一致，并将这些对象合并，返回一个新对象，包含所有对象的功能和数据，合并策略下文描述。</td>
+<td>mixin</td>
+</tr>
+<tr>
+<td><code>Page(...mixins:MpPageSpec[]) : MpPageSpec</code></td>
+<td>接收多个对象，对象结构与小程序<code>Page</code>函数接收的对象结构一致，并将这些对象合并，返回一个新对象，包含所有对象的功能和数据，合并策略下文描述。</td>
+<td>mixin</td>
+</tr>
+<tr>
+<td><code>Component(...mixins:MpComponentSpec[]) : MpComponentSpec</code></td>
+<td>接收多个对象，对象结构与小程序<code>Component</code>函数接收的对象结构一致，并将这些对象合并，返回一个新对象，包含所有对象的功能和数据，合并策略下文描述。</td>
+<td>mixin</td>
+</tr>
+<tr>
+<td><code>Api</code></td>
+<td>与小程序上的<code>wx</code> <code>my</code> <code>swan</code> <code>tt</code>等对象的属性和方法一致，只不过在其方法上添加了钩子函数，方便拦截处理</td>
+<td>mixin</td>
+</tr>
+<tr>
+<td><code>MixinStore.addHook(type:string, hook:MpMethodHook) </code></td>
+<td><code>MpKit</code>中内置了很多全局钩子函数，方可实现了全局拦截，setData重写等功能，而如果你也想在全局添加自己的钩子函数，那么可以调用此函数</td>
+<td>mixin</td>
+</tr>
+<tr>
+<td><code>setData(view:any, data:any, callback:Function) : Promise&lt;DiffDataResult&gt;</code></td>
+<td>以优化的方式向某个Page/Component设置数据，仅设置变化的数据，并以Promise的方式返回diff后的数据结果</td>
+<td>set-data</td>
+</tr>
+</tbody></table>
+<h2 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h2><p>从上面的功能列表中可以看到，某些方法或变量是依赖插件的，如果没有安装相关插件，则无法使用对用方法；</p>
+<h2 id="App-Page-Component"><a href="#App-Page-Component" class="headerlink" title="App/Page/Component"></a>App/Page/Component</h2><p>当使用<code>MpKit.App/Page/Component</code>时，可传递多个对象，如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> MpKit <span class="keyword">from</span> <span class="string">&#x27;@mpkit/inject/dist/index&#x27;</span>;</span><br><span class="line"><span class="comment">// 如果在config中配置了rewrite.App=true，则调用App等同于调用了[未重写的App(MpKit.App)]</span></span><br><span class="line">App(MpKit.App(&#123;</span><br><span class="line">    globalData: &#123;</span><br><span class="line">        name: <span class="string">&#x27;Tom&#x27;</span>,</span><br><span class="line">        age: <span class="number">10</span></span><br><span class="line">    &#125;,</span><br><span class="line">    onShow() &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;onShow1&#x27;</span>)</span><br><span class="line">    &#125;,</span><br><span class="line">    add(a, b) &#123;</span><br><span class="line">        <span class="keyword">return</span> a + b;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;, &#123;</span><br><span class="line">    globalData: &#123;</span><br><span class="line">        age: <span class="number">20</span></span><br><span class="line">    &#125;,</span><br><span class="line">    onShow() &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">`onShow2, <span class="subst">$&#123;<span class="built_in">this</span>.add(<span class="number">2</span>, <span class="number">4</span>)&#125;</span>`</span>);</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="built_in">this</span>.globalData);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;));</span><br><span class="line"><span class="comment">// 输出：onShow1</span></span><br><span class="line"><span class="comment">// 输出：onShow2, 6</span></span><br><span class="line"><span class="comment">// 输出：&#123; name: &#x27;Tom&#x27;, age: 20 &#125;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Component(MpKit.Component(&#123;</span><br><span class="line">    data: &#123;</span><br><span class="line">        name: <span class="string">&#x27;Alice&#x27;</span>,</span><br><span class="line">        products: [</span><br><span class="line">            &#123;</span><br><span class="line">                name: <span class="string">&#x27;苹果&#x27;</span>,</span><br><span class="line">                price: <span class="number">6</span></span><br><span class="line">            &#125;,</span><br><span class="line">            &#123;</span><br><span class="line">                name: <span class="string">&#x27;香蕉&#x27;</span>,</span><br><span class="line">                price: <span class="number">5</span></span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;,</span><br><span class="line">    created() &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;created1&#x27;</span>)</span><br><span class="line">    &#125;,</span><br><span class="line">    methods: &#123;</span><br><span class="line">        sayhi() &#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">`hi <span class="subst">$&#123;<span class="built_in">this</span>.data.name&#125;</span>`</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;, &#123;</span><br><span class="line">    data: &#123;</span><br><span class="line">        products: [</span><br><span class="line">            &#123;</span><br><span class="line">                price: <span class="number">8</span></span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;,</span><br><span class="line">    created() &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;created2&#x27;</span>);</span><br><span class="line">        <span class="built_in">this</span>.sayhi();</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="built_in">this</span>.data.list);</span><br><span class="line">    &#125;,</span><br><span class="line">    methods: &#123;</span><br><span class="line">        sayhi() &#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">`你好 <span class="subst">$&#123;<span class="built_in">this</span>.data.name&#125;</span>`</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出：created1</span></span><br><span class="line"><span class="comment">// 输出：created2</span></span><br><span class="line"><span class="comment">// 输出：hi Alice</span></span><br><span class="line"><span class="comment">// 输出：你好 Alice</span></span><br><span class="line"><span class="comment">// 输出：[ &#123; name: &#x27;苹果&#x27;, price: 8 &#125;, &#123; name: &#x27;香蕉&#x27;, price: 5 &#125; ]</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="合并策略"><a href="#合并策略" class="headerlink" title="合并策略"></a>合并策略</h2><p>从上面的例子可以看出合并策略是：</p>
+<ul>
+<li>属性进行深度合并</li>
+<li>方法会保留所有mixin中的方法体，按照顺序全部执行</li>
+</ul>
+<h2 id="钩子函数"><a href="#钩子函数" class="headerlink" title="钩子函数"></a>钩子函数</h2><p>为可以进行全局拦截<code>App/Page/Component/Api</code>上的方法，MpKit做了钩子函数的机制，具体为：</p>
+<ul>
+<li>每个方法执行前会调用<code>before</code>钩子</li>
+<li>如果<code>before</code>钩子函数存在，且有返回值（如果有多个<code>before</code>钩子则取最后一个不为<code>undefined|true</code>的结果）时<ul>
+<li>对于<code>App/Page/Component</code>如果返回值为<code>false</code>，则不会继续向下执行</li>
+<li>对于<code>Api</code>如果返回值为<code>false</code>，则不会继续向下执行；同时如果返回值不为<code>true</code>和<code>undefined</code>时，会直接将结果返回出去，且不会继续向下执行</li>
+</ul>
+</li>
+<li>然后执行<code>方法体</code>，如果有多个，则依次全部执行，并返回最后一个不为空的结果</li>
+<li>执行<code>after</code>钩子，并传入<code>方法体</code>的执行结果</li>
+<li>如果是<code>Api</code>上的异步方法，还会根据结果回调（success|fail）在执行<code>complete</code>钩子</li>
+</ul>
+<p>MpKit内置了很多钩子，用于全局事件触发、方法重写等，同时你可以添加自己的钩子函数，调用：</p>
+<p><code>MpKit.MixinStore.addHook(type:MpViewType.App|MpViewType.Page|MpViewType.Component|&#39;Api&#39;, hook:MpMethodHook)</code>可为 App/Page/Component/Api 添加全局钩子函数；<code>MpMethodHook</code>的定义如下：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> MpMethodHookLike &#123;</span><br><span class="line">    before?(</span><br><span class="line">        methodName: <span class="built_in">string</span>,</span><br><span class="line">        methodArgs: <span class="built_in">any</span>[],</span><br><span class="line">        methodHandler: <span class="built_in">Function</span>,</span><br><span class="line">        funId?: <span class="built_in">string</span></span><br><span class="line">    );</span><br><span class="line">    after?(</span><br><span class="line">        methodName: <span class="built_in">string</span>,</span><br><span class="line">        methodArgs: <span class="built_in">any</span>[],</span><br><span class="line">        methodResult: <span class="built_in">any</span>,</span><br><span class="line">        funId?: <span class="built_in">string</span></span><br><span class="line">    );</span><br><span class="line">    <span class="keyword">catch</span>?(</span><br><span class="line">        methodName: <span class="built_in">string</span>,</span><br><span class="line">        methodArgs: <span class="built_in">any</span>[],</span><br><span class="line">        error: <span class="built_in">Error</span>,</span><br><span class="line">        errType?: <span class="built_in">string</span>,</span><br><span class="line">        funId?: <span class="built_in">string</span></span><br><span class="line">    );</span><br><span class="line">    complete?(</span><br><span class="line">        methodName: <span class="built_in">string</span>,</span><br><span class="line">        methodArgs: <span class="built_in">any</span>[],</span><br><span class="line">        res: <span class="built_in">any</span>,</span><br><span class="line">        success?: <span class="built_in">boolean</span>,</span><br><span class="line">        funId?: <span class="built_in">string</span></span><br><span class="line">    );</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">interface</span> MpMethodHook <span class="keyword">extends</span> MpMethodHookLike &#123;</span><br><span class="line">    [prop: <span class="built_in">string</span>]: <span class="built_in">Function</span> | MpMethodHookLike;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>示例1：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> MpKit <span class="keyword">from</span> <span class="string">&quot;@mpkit/inject/dist/index&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; MpViewType &#125; <span class="keyword">from</span> <span class="string">&quot;@mpkit/inject/dist/types&quot;</span>;</span><br><span class="line">MpKit.MixinStore.addHook(MpViewType.App, &#123;</span><br><span class="line">    before(methodName, methodArgs) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">`before methodName=<span class="subst">$&#123;methodName&#125;</span>`</span>);</span><br><span class="line">    &#125;,</span><br><span class="line">    after(methodName, methodArgs, methodResult) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">`after methodName=<span class="subst">$&#123;methodName&#125;</span>, <span class="subst">$&#123;methodResult&#125;</span>`</span>);</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="keyword">catch</span>(methodName, methodArgs, error) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">`catch err=<span class="subst">$&#123;error.message&#125;</span>`</span>);</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;);</span><br><span class="line">App(</span><br><span class="line">    MpKit.App(&#123;</span><br><span class="line">        onLaunch() &#123;</span><br><span class="line">            <span class="built_in">this</span>.add(<span class="number">1</span>, <span class="number">2</span>);</span><br><span class="line">        &#125;,</span><br><span class="line">        onShow() &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">&quot;test&quot;</span>);</span><br><span class="line">        &#125;,</span><br><span class="line">        add(a, b) &#123;</span><br><span class="line">            <span class="keyword">return</span> a + b;</span><br><span class="line">        &#125;,</span><br><span class="line">    &#125;)</span><br><span class="line">);</span><br><span class="line"><span class="comment">// 输出：before methodName=onLaunch</span></span><br><span class="line"><span class="comment">// 输出：before methodName=add</span></span><br><span class="line"><span class="comment">// 输出：after methodName=add, 2</span></span><br><span class="line"><span class="comment">// 输出：after methodName=onLaunch,</span></span><br><span class="line"><span class="comment">// 输出：before methodName=onShow,</span></span><br><span class="line"><span class="comment">// 输出：catch err=test</span></span><br><span class="line"></span><br><span class="line">MpKit.MixinStore.addHook(<span class="string">&quot;Api&quot;</span>, &#123;</span><br><span class="line">    before(methodName, methodArgs, methodHandler, funId) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">`before api=<span class="subst">$&#123;methodName&#125;</span>`</span>);</span><br><span class="line">    &#125;,</span><br><span class="line">    after(methodName, methodArgs, methodResult, funId) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">`after api=<span class="subst">$&#123;methodName&#125;</span>, <span class="subst">$&#123;methodResult&#125;</span>`</span>);</span><br><span class="line">    &#125;,</span><br><span class="line">    complete(methodName, methodArgs, res, isSuccess, funId) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">`complete api=<span class="subst">$&#123;methodName&#125;</span>, <span class="subst">$&#123;isSuccess&#125;</span>, <span class="subst">$&#123;res&#125;</span>`</span>);</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;);</span><br><span class="line">MpKit.Api.request(&#123;</span><br><span class="line">    url: <span class="string">&quot;...&quot;</span>,</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 输出：before api=request</span></span><br><span class="line"><span class="comment">// 输出：after api=request, [RequestTask Object]</span></span><br><span class="line"><span class="comment">// 假设请求成功且返回字符串“1”，则输出：complete api=request, true, 1</span></span><br><span class="line"><span class="comment">// 假设请求失败，则输出：complete api=request, false, &#123; errMsg:&#x27;...&#x27; &#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>示例2：当在<code>before</code>钩子中返回<code>false</code>会具体值时：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">MpKit.MixinStore.addHook(MpViewType.App, &#123;</span><br><span class="line">    onShow: &#123;</span><br><span class="line">        before(methodName, methodArgs) &#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">&quot;hook onShow&quot;</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;);</span><br><span class="line">App(</span><br><span class="line">    MpKit.App(&#123;</span><br><span class="line">        onLaunch() &#123;&#125;,</span><br><span class="line">        onShow() &#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">&quot;self onShow&quot;</span>);</span><br><span class="line">        &#125;,</span><br><span class="line">    &#125;)</span><br><span class="line">);</span><br><span class="line"><span class="comment">// 仅输出：hook onShow</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> store = &#123;&#125;;</span><br><span class="line">MpKit.MixinStore.addHook(<span class="string">&quot;Api&quot;</span>, &#123;</span><br><span class="line">    before(methodName, methodArgs, methodHandler, funId) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">`before methodName=<span class="subst">$&#123;methodName&#125;</span>`</span>);</span><br><span class="line">        <span class="keyword">if</span> (methodName === <span class="string">&quot;setStorageSync&quot;</span>) &#123;</span><br><span class="line">            store[methodArgs[<span class="number">0</span>]] = methodArgs[<span class="number">1</span>];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (methodName === <span class="string">&quot;getStorageSync&quot;</span>) &#123;</span><br><span class="line">            <span class="comment">// 并不会真正执行(wx|my|tt|..).getStorageSync</span></span><br><span class="line">            <span class="keyword">return</span> store[methodArgs[<span class="number">0</span>]];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    after(methodName) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">`after methodName=<span class="subst">$&#123;methodName&#125;</span>`</span>);</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;);</span><br><span class="line">MpKit.Api.setStorageSync(<span class="string">&quot;name&quot;</span>, <span class="string">&quot;Tom&quot;</span>);</span><br><span class="line"><span class="keyword">const</span> name = MpKit.Api.getStorageSync(<span class="string">&quot;name&quot;</span>);</span><br><span class="line"><span class="built_in">console</span>.log(name === store.name);</span><br><span class="line"><span class="comment">// 输出：before methodName=setStorageSync</span></span><br><span class="line"><span class="comment">// 输出：after methodName=setStorageSync</span></span><br><span class="line"><span class="comment">// 输出：before methodName=getStorageSync</span></span><br><span class="line"><span class="comment">// 输出：true</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>希望MpKit可以为你带来便捷愉快的开发体验，祝大家工作顺心，家庭美满，加油！</p>
+<blockquote>
+<p>可关注作者的其他开源项目：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/imingyu/squirrel">小松鼠</a>：适用于JavaScript平台的数据上报工具</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/imingyu/mp-console">小程序调试辅助工具</a>：小程序控制台调试辅助工具</li>
+</ul>
+</blockquote>
+
+        </div>
+        <footer class="article-footer">
+            
+
+    <div class="bdsharebuttonbox">
+    <a href="#" class="bds_more" data-cmd="more">分享到：</a>
+    <a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间">QQ空间</a>
+    <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博">新浪微博</a>
+    <a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博">腾讯微博</a>
+    <a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网">人人网</a>
+    <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信">微信</a>
+</div>
+<script>
+window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"16"},"share":{"bdSize":16}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+<style>
+    .bdshare_popup_box {
+        border-radius: 4px;
+        border: #e1e1e1 solid 1px;
+    }
+    .bdshare-button-style0-16 a,
+    .bdshare-button-style0-16 .bds_more {
+        padding-left: 20px;
+        margin: 6px 10px 6px 0;
+    }
+    .bdshare_dialog_list a,
+    .bdshare_popup_list a,
+    .bdshare_popup_bottom a {
+        font-family: 'Microsoft Yahei';
+    }
+    .bdshare_popup_top {
+        display: none;
+    }
+    .bdshare_popup_bottom {
+        height: auto;
+        padding: 5px;
+    }
+</style>
+
+
+
+        </footer>
+    </div>
+</article>
+
+    <section id="comments">
+    
+    </section>
+
+
+                        </div>
+                    </section>
+                    <aside id="sidebar">
+    <a class="sidebar-toggle" title="Expand Sidebar"><i class="toggle icon"></i></a>
+    <div class="sidebar-top">
+        <p>关注我 :</p>
+        <ul class="social-links">
+            
+                
+                <li>
+                    <a class="social-tooltip" title="github" href="https://github.com/imingyu" target="_blank">
+                        <i class="icon fa fa-github"></i>
+                    </a>
+                </li>
+                
+            
+        </ul>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+    
+        <a href="/2020/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
+        <strong class="article-nav-caption">上一篇</strong>
+        <p class="article-nav-title">Hello World</p>
+        <i class="icon fa fa-chevron-left" id="icon-chevron-left"></i>
+        </a>
+    
+</nav>
+
+    
+    <div class="widgets-container">
+        
+            
+                
+    <div class="widget-wrap">
+        <h3 class="widget-title">最新文章</h3>
+        <div class="widget">
+            <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2020/mpkit/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2020/mpkit/" class="title">使用MpKit的事件、Mixin、SetData优化、全局拦截等功能增强开发多平台小程序</a></p>
+                            <p class="item-date"><time datetime="2020-08-19T02:05:24.932Z" itemprop="datePublished">2020-08-19</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2020/hello-world/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"></p>
+                            <p class="item-title"><a href="/2020/hello-world/" class="title">Hello World</a></p>
+                            <p class="item-date"><time datetime="2020-08-19T02:03:21.129Z" itemprop="datePublished">2020-08-19</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+            
+                
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">归档</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li></ul>
+        </div>
+    </div>
+
+
+            
+                
+
+            
+                
+
+            
+                
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">链接</h3>
+        <div class="widget">
+            <ul>
+                
+            </ul>
+        </div>
+    </div>
+
+
+            
+        
+    </div>
+</aside>
+                </div>
+            </div>
+        </div>
+        <footer id="footer">
+    <div class="container">
+        <div class="container-inner">
+            <a id="back-to-top" href="javascript:;"><i class="icon fa fa-angle-up"></i></a>
+            <div class="credit">
+                <h1 class="logo-wrap">
+                    <a href="/" class="logo"></a>
+                </h1>
+                <p>&copy; 2020 Yuan Mingyu</p>
+                <p>Powered by <a href="//hexo.io/" target="_blank">Hexo</a>. Theme by <a href="//github.com/ppoffice" target="_blank">PPOffice</a></p>
+            </div>
+        </div>
+    </div>
+</footer>
+        
+
+<!--Github Issue 评论系统-->
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+    $(function () {
+        var comments = $("#comments");
+        if(comments.length>0){
+            new Gitalk({
+                clientID: '20817dd8dec2beb50452',
+                clientSecret: 'de86f690cb639d5fd6420d8d1d671a07ecfcbf04',
+                repo: 'blog-comments',
+                owner: 'imingyu',
+                admin: ['imingyu'],
+                createIssueManually:true
+            }).render(comments[0]);
+        }
+    })
+</script>
+
+    
+        
+<script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-share.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-video.min.js"></script>
+
+    
+    
+    
+
+
+
+<!-- Custom Scripts -->
+
+<script src="/js/main.js"></script>
+
+
+    </div>
+</body>
+</html>
