@@ -34,6 +34,7 @@ MpKit发布到了NPM平台，以模块化的方式划分为多个包，某些包
 |  | 小程序 | | | | H5 | Node.js | |
 |  | 微信 |支付宝|百度|字节跳动| | | |
 | [@mpkit/inject](https://www.npmjs.com/package/@mpkit/inject) | ● |● |● |● | | |提供小程序环境适用的多种实用函数或组件，如setData优化、Mixin、事件总线等。[查看文档](https://github.com/imingyu/mpkit/tree/master/packages/inject) |
+| [@mpkit/set-data](https://www.npmjs.com/package/@mpkit/set-data) | ● |● |● |● || |小程序setData优化。[查看文档](https://github.com/imingyu/mpkit/tree/master/packages/set-data) |
 | [@mpkit/ebus](https://www.npmjs.com/package/@mpkit/ebus) | ● |● |● |● |● | ●|提供事件触发、监听等功能。[查看文档](https://github.com/imingyu/mpkit/tree/master/packages/ebus) |
 | [@mpkit/mixin](https://www.npmjs.com/package/@mpkit/mixin) | ● |● |● |● | | |为小程序提供混入功能。[查看文档](https://github.com/imingyu/mpkit/tree/master/packages/mixin) |
 | [@mpkit/util](https://www.npmjs.com/package/@mpkit/util) | ● |● |● |● | | |工具函数[查看文档](https://github.com/imingyu/mpkit/tree/master/packages/util) |
