@@ -1,2 +1,2 @@
 # 我的个人博客
-https://imingyu.tech
+https://imingyu.github.io
