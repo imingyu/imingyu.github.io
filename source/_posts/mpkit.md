@@ -18,7 +18,7 @@ title: 使用MpKit的事件、Mixin、SetData优化、全局拦截等功能增�
 
 基于以上需求，都是我以往实现过的功能，所以我将我的经验总结成了一个开源项目MpKit，里面就包含对以上需求的功能实现，且不止于此；
 
-MpKit的主要功能都经过单元测试，可放心使用，项目主页：[https://github.com/imingyu/mpkit](https://github.com/imingyu/mpkit)；
+项目主页：[https://github.com/imingyu/mpkit](https://github.com/imingyu/mpkit)；
 
 下面我来介绍下它的具体用法和功能列表。
 
@@ -114,7 +114,7 @@ MpKit.on(...);
 当使用`MpKit.App/Page/Component`时，可传递多个对象，如：
 ```javascript
 import MpKit from '@mpkit/inject/dist/index';
-// 如果在config中配置了rewrite.App=true，则调用App等同于调用了[未重写的App(MpKit.App)]
+// 如果在config中配置了rewrite.App=true，则调用App等同于调用了[未重写的App(MpKit.App(...mixins))]
 App(MpKit.App({
     globalData: {
         name: 'Tom',
@@ -297,7 +297,7 @@ MpKit.Api.request({
 // 假设请求失败，则输出：complete api=request, false, { errMsg:'...' }
 ```
 
-示例2：当在`before`钩子中返回`false`会具体值时：
+示例2：当在`before`钩子中返回`false`或具体值时：
 ```javascript
 MpKit.MixinStore.addHook(MpViewType.App, {
     onShow: {
